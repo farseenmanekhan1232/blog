@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>View Blogs</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+            rel="stylesheet"
+        />
+        <link
+            href="https://cdnjs.cloudflare.com/npm/lucide@0.44.0/dist/css/lucide.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            /* Custom styles for ShadCN New York theme */
+            body {
+                background-color: #1c1c1e;
+                color: #f9f9f9;
+                font-family: "Inter", sans-serif;
+            }
+            a {
+                color: #4da6ff;
+            }
+            .timeline {
+                margin-left: 2rem;
+                padding-left: 1rem;
+            }
+            .timeline-entry {
+                margin-bottom: 2rem;
+            }
+            .content {
+                display: none;
+            }
+            .title {
+                cursor: pointer;
+            }
+            .title i {
+                transition: transform 0.2s;
+            }
+            .title.collapsed i {
+                transform: rotate(-90deg);
+            }
+        </style>
+    </head>
+    <body class="font-sans antialiased">
+        <div class="container mx-auto p-6">
+            <header class="mb-12">
+                <h1 class="text-4xl font-bold mb-2">blogs</h1>
+            </header>
+
+            <section id="blogEntries" class="timeline"></section>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                fetch("http://localhost:3000/blogs")
+                    .then((response) => response.json())
+                    .then((blogs) => {
+                        const blogEntries =
+                            document.getElementById("blogEntries");
+
+                        blogs.forEach((blog) => {
+                            const entry = document.createElement("div");
+                            entry.className = "timeline-entry";
+                            entry.innerHTML = `
+                            <div>
+                            <p class="italic text-xs ">${new Date(blog.date).toLocaleString()}</p>
+                                <h3 class="text-xl font-semibold title collapsed ">${blog.title} <i class="lucide lucide-chevron-right"></i></h3>
+
+                                <div class="content mt-2">${blog.content}</div>
+                            </div>
+                        `;
+                            blogEntries.appendChild(entry);
+                        });
+
+                        const titles = document.querySelectorAll(".title");
+                        titles.forEach((title) => {
+                            title.addEventListener("click", function () {
+                                const content = this.nextElementSibling;
+                                const icon = this.querySelector("i");
+                                if (
+                                    content.style.display === "none" ||
+                                    content.style.display === ""
+                                ) {
+                                    content.style.display = "block";
+                                    icon.classList.remove(
+                                        "lucide-chevron-right",
+                                    );
+                                    icon.classList.add("lucide-chevron-down");
+                                } else {
+                                    content.style.display = "none";
+                                    icon.classList.remove(
+                                        "lucide-chevron-down",
+                                    );
+                                    icon.classList.add("lucide-chevron-right");
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => console.error("Error:", error));
+            });
+        </script>
+    </body>
+</html>
