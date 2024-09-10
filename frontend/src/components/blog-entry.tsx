@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function BlogEntry({ blog }: { blog: any }) {
+export default function BlogEntry({ blog }: any) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (

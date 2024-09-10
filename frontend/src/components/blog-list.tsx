@@ -1,4 +1,4 @@
-import { BlogEntry } from "./blog-entry";
+import BlogEntry from "./blog-entry";
 
 async function getBlogs() {
   const res = await fetch("https://blog-h96d.onrender.com/blogs", {
@@ -10,7 +10,7 @@ async function getBlogs() {
   return res.json();
 }
 
-export async function BlogList() {
+export default async function BlogList() {
   const blogs = await getBlogs();
 
   return (
