@@ -50,7 +50,7 @@ app.post("/blogs", async (req, res) => {
   try {
     const newBlog = { date, title, content };
     const result = await blogCollection.insertOne(newBlog);
-    res.json(result.ops[0]);
+    res.status(200).send("done ");
   } catch (error) {
     res.status(500).json({ error: "Failed to post blog" });
   }
