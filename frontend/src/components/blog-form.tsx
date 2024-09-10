@@ -4,9 +4,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
-export default function BlogForm() {
+export function BlogForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const { toast } = useToast();
@@ -49,31 +57,33 @@ export default function BlogForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label htmlFor="blogTitle" className="block text-lg font-medium">
-          Title
-        </label>
-        <Input
-          id="blogTitle"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter the title"
-        />
-      </div>
-      <div>
-        <label htmlFor="blogContent" className="block text-lg font-medium">
-          Content
-        </label>
-        <Textarea
-          id="blogContent"
-          rows={4}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Enter the content"
-        />
-      </div>
-      <Button type="submit">Post Blog</Button>
-    </form>
+    <div className="text-white">
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Input
+              id="blogTitle"
+              className="border border-white border-opacity-10"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter the title"
+            />
+          </div>
+          <div className="space-y-2">
+            <Textarea
+              id="blogContent"
+              className="border border-white border-opacity-10"
+              rows={4}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Enter the content"
+            />
+          </div>
+        </div>
+        <div className="py-4">
+          <Button type="submit">Post Blog</Button>
+        </div>
+      </form>
+    </div>
   );
 }
