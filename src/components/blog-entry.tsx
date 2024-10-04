@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
+import { Blog } from "@/types/blog";
 
-export function BlogEntry({ blog }: { blog: any }) {
+export function BlogEntry({ blog }: { blog: Blog }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (

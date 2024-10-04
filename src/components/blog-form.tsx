@@ -5,48 +5,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { postBlogToAPI } from "@/lib/api";
 
 export function BlogForm() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const { toast } = useToast();
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
-    const date = new Date().toISOString();
-    const formattedContent = content.replace(/\n/g, "<br>");
-
-    if (title && content) {
-      try {
-        const response = await fetch("https://blog-h96d.onrender.com/blogs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ date, title, content: formattedContent }),
-        });
-
-        if (response.ok) {
-          setTitle("");
-          setContent("");
-          toast({
-            title: "Success",
-            description: "Blog posted successfully!",
-          });
-        } else {
-          throw new Error("Failed to post blog");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        toast({
-          title: "Error",
-          description: "Failed to post blog. Please try again.",
-          variant: "destructive",
-        });
-      }
+    try {
+      await postBlogToAPI({ title, content });
+      setTitle("");
+      setContent("");
+      toast({
+        title: "Success",
+        description: "Blog posted successfully!",
+      });
+      router.refresh();
+    } catch (error) {
+      console.error("Error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to post blog. Please try again.",
+        variant: "destructive",
+      });
     }
-  };
+  }
 
   return (
     <div className="text-white">
@@ -55,20 +42,20 @@ export function BlogForm() {
           <div className="space-y-2">
             <Input
               id="blogTitle"
-              className="border border-white border-opacity-10"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter the title"
+              className="border border-white border-opacity-10"
             />
           </div>
           <div className="space-y-2">
             <Textarea
               id="blogContent"
-              className="border border-white border-opacity-10"
-              rows={4}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Enter the content"
+              className="border border-white border-opacity-10"
+              rows={4}
             />
           </div>
         </div>
