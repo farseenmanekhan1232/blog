@@ -4,6 +4,7 @@ import { getBlogsFromAPI } from "@/lib/api";
 export async function BlogList() {
   try {
     const blogs = await getBlogsFromAPI();
+
     return (
       <div className="space-y-10 text-white">
         {blogs.map((blog) => (

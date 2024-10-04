@@ -1,33 +1,17 @@
 import { Blog } from "@/types/blog";
 
 function getBaseUrl() {
-  if (typeof window !== "undefined") {
-    // Browser should use relative path
-    return "";
-  }
-  if (process.env.VERCEL_URL) {
-    // Reference for vercel.com
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  if (process.env.RENDER_INTERNAL_HOSTNAME) {
-    // Reference for render.com
-    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
-  }
-  // Assume localhost
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  if (typeof window !== "undefined") return ""; // browser should use relative url
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
+  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
 }
 
 export async function getBlogsFromAPI(): Promise<Blog[]> {
-  const res = await fetch(`${getBaseUrl()}/api/blogs`, { cache: "no-store" });
+  const res = await fetch(`${getBaseUrl()}/api/blogs`, {
+    next: { revalidate: 60 },
+  });
   if (!res.ok) {
-    const errorText = await res.text();
-    console.error(
-      "Failed to fetch blogs. Status:",
-      res.status,
-      "Response:",
-      errorText
-    );
-    throw new Error(`Failed to fetch blogs: ${res.status} ${errorText}`);
+    throw new Error("Failed to fetch blogs");
   }
   return res.json();
 }
@@ -49,13 +33,6 @@ export async function postBlogToAPI(blog: {
   });
 
   if (!res.ok) {
-    const errorText = await res.text();
-    console.error(
-      "Failed to post blog. Status:",
-      res.status,
-      "Response:",
-      errorText
-    );
-    throw new Error(`Failed to post blog: ${res.status} ${errorText}`);
+    throw new Error("Failed to post blog");
   }
 }
