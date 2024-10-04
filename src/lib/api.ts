@@ -12,13 +12,20 @@ export async function getBlogsFromAPI(): Promise<Blog[]> {
   const baseUrl = getBaseUrl();
   const url = baseUrl ? `${baseUrl}/api/blogs` : "/api/blogs";
 
-  const res = await fetch(url, {
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) {
-    throw new Error("Failed to fetch blogs");
+  console.log(`Fetching blogs from: ${url}`);
+
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch blogs: ${res.status} ${res.statusText}`);
+    }
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    throw error;
   }
-  return res.json();
 }
 
 export async function postBlogToAPI(blog: {
@@ -28,19 +35,26 @@ export async function postBlogToAPI(blog: {
   const baseUrl = getBaseUrl();
   const url = baseUrl ? `${baseUrl}/api/blogs` : "/api/blogs";
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      date: new Date().toISOString(),
-      title: blog.title,
-      content: blog.content.replace(/\n/g, "<br>"),
-    }),
-  });
+  console.log(`Posting blog to: ${url}`);
 
-  if (!res.ok) {
-    throw new Error("Failed to post blog");
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        date: new Date().toISOString(),
+        title: blog.title,
+        content: blog.content.replace(/\n/g, "<br>"),
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to post blog: ${res.status} ${res.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error posting blog:", error);
+    throw error;
   }
 }

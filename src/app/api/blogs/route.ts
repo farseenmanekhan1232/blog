@@ -28,10 +28,10 @@ export async function GET() {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=59",
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("API route error:", error);
     return NextResponse.json(
-      { error: "Failed to fetch blogs" },
+      { error: "Failed to fetch blogs", details: error.message },
       { status: 500 }
     );
   }
@@ -47,6 +47,7 @@ export async function POST(request: Request) {
       );
     }
 
+    console.log("API route: Attempting to connect to MongoDB for POST");
     const client = await clientPromise;
     const db = client.db("blog");
     const result = await db
@@ -64,12 +65,17 @@ export async function POST(request: Request) {
       content,
     };
 
+    console.log("API route: Successfully posted new blog");
+
     return NextResponse.json(
       { message: "Blog posted successfully", blog: newBlog },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("API route error:", error);
-    return NextResponse.json({ error: "Failed to post blog" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to post blog", details: error.message },
+      { status: 500 }
+    );
   }
 }
