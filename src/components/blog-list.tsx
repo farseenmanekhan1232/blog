@@ -1,4 +1,3 @@
-"use server";
 import { BlogEntry } from "@/components/blog-entry";
 import { getBlogsFromAPI } from "@/lib/api";
 
@@ -7,7 +6,7 @@ export async function BlogList() {
     const blogs = await getBlogsFromAPI();
 
     return (
-      <div className="space-y-10 text-white">
+      <div className="space-y-2  text-white">
         {blogs.map((blog) => (
           <BlogEntry key={blog.id} blog={blog} />
         ))}
@@ -15,6 +14,6 @@ export async function BlogList() {
     );
   } catch (error) {
     console.error("Error in BlogList:", error);
-    return <div>Error loading blogs. Please try again later.</div>;
+    throw new Error("Failed to load blogs");
   }
 }
