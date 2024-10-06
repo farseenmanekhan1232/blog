@@ -7,12 +7,17 @@ export async function GET() {
   try {
     console.log("API route: Attempting to connect to MongoDB");
     const client = await clientPromise;
+    console.log("API route: Successfully connected to MongoDB");
+
     const db = client.db("blog");
+    console.log("API route: Accessing 'blog' database");
+
     const blogsFromDb: WithId<Document>[] = await db
       .collection("blogs")
       .find()
       .sort({ date: -1 })
       .toArray();
+    console.log(`API route: Successfully fetched ${blogsFromDb.length} blogs`);
 
     const blogs: Blog[] = blogsFromDb.map((doc) => ({
       id: doc._id.toString(),
@@ -20,8 +25,6 @@ export async function GET() {
       title: doc.title as string,
       content: doc.content as string,
     }));
-
-    console.log("API route: Successfully fetched blogs");
 
     return NextResponse.json(blogs, {
       headers: {
