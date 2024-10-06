@@ -1,3 +1,4 @@
+"use server";
 import { BlogEntry } from "@/components/blog-entry";
 import { getBlogsFromAPI } from "@/lib/api";
 

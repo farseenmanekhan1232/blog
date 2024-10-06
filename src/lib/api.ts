@@ -1,16 +1,16 @@
 import { Blog } from "@/types/blog";
-
-function getBaseUrl() {
-  if (typeof window !== "undefined") return ""; // browser should use relative url
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
-  if (process.env.NEXT_PUBLIC_VERCEL_URL)
-    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`; // Check for NEXT_PUBLIC_VERCEL_URL
-  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
-}
-
+import { headers } from "next/headers";
 export async function getBlogsFromAPI(): Promise<Blog[]> {
-  const baseUrl = getBaseUrl();
-  const url = baseUrl ? `${baseUrl}/api/blogs` : "/api/blogs";
+  const currentHeaders = headers();
+  const host = currentHeaders.get("host");
+
+  if (!host) {
+    throw new Error("Cannot determine the host from headers.");
+  }
+
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const baseUrl = `${protocol}://${host}`;
+  const url = `${baseUrl}/api/blogs`;
 
   console.log(`Fetching blogs from: ${url}`);
 
@@ -18,6 +18,7 @@ export async function getBlogsFromAPI(): Promise<Blog[]> {
     const res = await fetch(url, {
       next: { revalidate: 60 },
     });
+
     if (!res.ok) {
       throw new Error(`Failed to fetch blogs: ${res.status} ${res.statusText}`);
     }
@@ -32,8 +33,16 @@ export async function postBlogToAPI(blog: {
   title: string;
   content: string;
 }): Promise<void> {
-  const baseUrl = getBaseUrl();
-  const url = baseUrl ? `${baseUrl}/api/blogs` : "/api/blogs";
+  const currentHeaders = headers();
+  const host = currentHeaders.get("host");
+
+  if (!host) {
+    throw new Error("Cannot determine the host from headers.");
+  }
+
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const baseUrl = `${protocol}://${host}`;
+  const url = `${baseUrl}/api/blogs`;
 
   console.log(`Posting blog to: ${url}`);
 
