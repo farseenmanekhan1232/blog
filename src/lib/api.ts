@@ -1,3 +1,4 @@
+"use server";
 import { Blog } from "@/types/blog";
 import { headers } from "next/headers";
 export async function getBlogsFromAPI(): Promise<Blog[]> {
